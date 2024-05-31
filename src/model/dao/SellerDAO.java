@@ -4,27 +4,17 @@ import model.entities.Seller;
 
 import java.util.List;
 
-public class SellerDAO {
+public interface SellerDAO {
 
 
-    void insert(Seller obj) {
+    void insert(Seller obj);
 
-    }
+    void update(Seller obj);
 
-    void update(Seller obj) {
+    void deleteById(Seller obj);
 
-    }
+    Seller findById(Integer id);
 
-    void deleteById(Seller obj) {
-
-    }
-
-    Seller findById(Integer id) {
-        return null;
-    }
-
-    List<Seller> findAll() {
-        return null;
-    }
+    List<Seller> findAll();
 
 }
