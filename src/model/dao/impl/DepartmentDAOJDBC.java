@@ -1,14 +1,11 @@
 package model.dao.impl;
 
 import DataBase.DBException;
+import DataBase.DataBase;
 import model.dao.DepartmentDAO;
 import model.entities.Department;
-import model.entities.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +21,36 @@ public class DepartmentDAOJDBC implements DepartmentDAO {
 
     @Override
     public void insert(Department obj) {
+        PreparedStatement statement = null;
+
+        try {
+            statement = conn.prepareStatement(
+                    "INSERT INTO department " +
+                            "(Name) " +
+                            "VALUES " +
+                            "(?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+            statement.setString(1, obj.getName());
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                ResultSet resultSet = null;
+                resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    int id = resultSet.getInt(1);
+                    obj.setId(id);
+                }
+                DataBase.closeResultSet(resultSet);
+            } else {
+                throw new DBException("Insert failed");
+            }
+        } catch (SQLException e) {
+            throw new DBException(e.getMessage());
+        } finally {
+            DataBase.closeStatement(statement);
+        }
 
     }
 
@@ -54,6 +81,8 @@ public class DepartmentDAOJDBC implements DepartmentDAO {
                 Department obj = instantiateDepartment(resultSet);
                 return obj;
             }
+            DataBase.closeResultSet(resultSet);
+            DataBase.closeStatement(preparedStatement);
             return null;
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
@@ -86,6 +115,9 @@ public class DepartmentDAOJDBC implements DepartmentDAO {
                Department obj = instantiateDepartment(resultSet);
                list.add(obj);
            }
+
+            DataBase.closeResultSet(resultSet);
+           DataBase.closeStatement(preparedStatement);
             return list;
         } catch (SQLException e) {
             throw new DBException(e.getMessage());

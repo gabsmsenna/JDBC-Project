@@ -22,5 +22,17 @@ public class Program2 {
         for (Department d : list) {
             System.out.println(d);
         }
+
+        System.out.println("\n=== TEST 3: INSERT ===");
+        Department newDepartment = new Department(null, "Marketing");
+        departmentDAO.insert(newDepartment);
+        System.out.println("New department created: " + newDepartment);
+
+        System.out.println("\n=== TEST 4: UPDATE ===");
+        Department updatedDepartment = departmentDAO.findById(2);
+        updatedDepartment.setName("Contability");
+        departmentDAO.update(updatedDepartment);
+        System.out.println("Updated completed!");
+
     }
 }
